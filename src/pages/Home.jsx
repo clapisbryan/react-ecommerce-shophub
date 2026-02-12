@@ -13,6 +13,8 @@ const Home = () => {
     const fetchProducts = async () => {
         try {
             const data = await getProduct();
+            console.log("Home Product", data);
+
             setProducts(data.products)
         } catch (error) {
             console.log(error);

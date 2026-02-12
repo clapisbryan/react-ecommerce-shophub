@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getSingleProduct } from '../Store/product/productServices';
+import { useCart } from '../context/CartContext';
 
 const ProductDetails = () => {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const navigate = useNavigate();
+
+    const { addToCart, cartItems } = useCart();
 
     useEffect(() => {
         getProduct(id);
@@ -19,7 +22,7 @@ const ProductDetails = () => {
                 return
             }
             console.log(res);
-            
+
             setProduct(res);
         } catch (error) {
             console.log(error);
@@ -30,6 +33,16 @@ const ProductDetails = () => {
     if (!product) {
         return <div className="page"><div className="container"><p>Loading...</p></div></div>;
     }
+
+    const productInCart = cartItems.find((item) => item.id === product.id);
+
+    const productQuantityLabel = productInCart ? `(${productInCart.quantity})` : "";
+
+    const handleAddToCart = async (product) => {
+        await addToCart(product.id);
+        navigate("/checkout");
+    };
+
 
     return (
         <div className='page'>
@@ -45,7 +58,7 @@ const ProductDetails = () => {
                         <h1 className='product-detail-name'>{product.title}</h1>
                         <p className='product-detail-price'>{product.price}</p>
                         <p className='product-detail-description'>{product.description}</p>
-                        <button className='btn btn-primary'>Add to Cart</button>
+                        <button className='btn btn-primary' onClick={() => handleAddToCart(product)}>Add to Cart {productQuantityLabel}</button>
                     </div>
                 </div>
             </div>
