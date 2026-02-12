@@ -1,20 +1,18 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export const AuthContext = createContext(null);
 
 export default function AuthProvider({ children }) {
-    // Initialize user state from localStorage
+
     const [user, setUser] = useState(
         localStorage.getItem("currentUserEmail")
             ? { email: localStorage.getItem("currentUserEmail") }
             : null
     );
 
-    // Sign up function
     const signUp = (email, password) => {
         const users = JSON.parse(localStorage.getItem("users") || "[]");
 
-        // Check if user exists
         if (users.find((u) => u.email === email)) {
             return { success: false, error: "Email already exists" };
         }
@@ -22,7 +20,6 @@ export default function AuthProvider({ children }) {
         const newUser = { email, password };
         users.push(newUser);
 
-        // Save users array to localStorage
         localStorage.setItem("users", JSON.stringify(users));
         localStorage.setItem("currentUserEmail", email);
 
@@ -31,7 +28,6 @@ export default function AuthProvider({ children }) {
         return { success: true };
     };
 
-    // Login function
     const login = (email, password) => {
         const users = JSON.parse(localStorage.getItem("users") || "[]");
 
@@ -56,4 +52,10 @@ export default function AuthProvider({ children }) {
             {children}
         </AuthContext.Provider>
     );
+}
+
+export function useAuth() {
+    const context = useContext(AuthContext);
+    
+    return context;
 }
