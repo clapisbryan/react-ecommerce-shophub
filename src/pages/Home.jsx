@@ -14,7 +14,7 @@ const Home = () => {
         try {
             const data = await getProduct();
             console.log(data);
-            setProducts(data)
+            setProducts(data.products)
         } catch (error) {
             console.log(error);
         }
